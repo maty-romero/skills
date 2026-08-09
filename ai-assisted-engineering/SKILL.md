@@ -18,35 +18,78 @@ Use this skill when the user explicitly invokes it for a learning-oriented engin
 Default workflow:
 
 ```text
-Extract → Attempt → Leverage → Explain → Break → Distill
+Extract → Align → Attempt → Analyze → Explain → Break → Distill
 ```
 
 The workflow is a **default path, not a rigid loop**. Return to an earlier step when a knowledge gap is discovered.
+
+## Human Decision Rule
+
+The AI proposes.
+
+The user decides.
+
+Do not automatically move from:
+
+* Analysis → Implementation
+* Risk Discovery → Fix Implementation
+
+without an explicit user decision.
 
 ## 0. Scope
 
 First classify the task:
 
 * **Routine:** prioritize execution; use a lightweight loop.
-* **Familiar:** brief Extract/Attempt, then Leverage.
+* **Familiar:** brief Extract/Attempt, then Analyze.
 * **Unfamiliar / high-impact:** use the full loop.
 * **Already-understood task:** do not manufacture learning friction.
 
 Ask only for information that materially affects the next step.
 
-If a progress file exists, read it first. Resume from its current state. Do not repeat completed work.
+If a progress file exists, read it first. Resume from its current state.
 
 ---
 
 ## 1. Extract — FRAME
 
-Identify the problem, constraints, concepts, assumptions, and unknowns.
+Identify:
+
+* Problem
+* Constraints
+* Concepts
+* Assumptions
+* Unknowns
 
 Do not solve the problem yet.
 
-For unfamiliar topics, ask the user to identify the important concepts and unknowns before supplying yours.
+For unfamiliar topics, ask the user to identify concepts and unknowns before supplying yours.
 
 Record concise results in the progress file.
+
+---
+
+## 1.5 Align — ALIGN
+
+Refine scope before the user attempts a solution.
+
+Actions:
+
+* Clarify ambiguous requirements.
+* Identify missing constraints.
+* Define success criteria.
+* Challenge assumptions.
+* Suggest relevant concepts.
+* Suggest useful resources.
+* Provide hints or questions to think about.
+
+Do not provide the solution.
+
+Do not generate code.
+
+Wait for the user to continue to Attempt.
+
+Record important clarifications.
 
 ---
 
@@ -54,7 +97,14 @@ Record concise results in the progress file.
 
 The human goes first.
 
-Ask for a rough architecture, data flow, pseudocode, implementation, hypothesis, or proposed solution.
+Ask for:
+
+* Architecture
+* Data flow
+* Pseudocode
+* Hypothesis
+* Partial implementation
+* Proposed solution
 
 Do not provide the solution before seeing the attempt unless the user explicitly chooses to skip it.
 
@@ -62,36 +112,43 @@ If skipped, state the tradeoff briefly and record the decision.
 
 ---
 
-## 3. Leverage — GENERATE / CRITIQUE
+## 3. Analyze — REVIEW / CRITIQUE
 
-Now use AI aggressively.
+Review the user's attempt.
 
-Generate or improve:
+Identify:
 
-* Code
-* Tests
-* Designs
-* Alternatives
-* Debugging hypotheses
-* Documentation
-
-Also **critique** the user's approach:
-
+* Strengths
+* Weaknesses
 * Missing assumptions
 * Risks
-* Better alternatives
 * Tradeoffs
-* Failure points
+* Alternative approaches
 
-Treat AI output as a proposal, not truth.
+Produce a concise proposal.
 
-Prefer the smallest useful output over unnecessary explanation.
+The proposal may include:
+
+* Recommended design
+* Alternative designs
+* Open questions
+* Tradeoffs
+
+Do not generate implementation automatically.
+
+Do not generate code automatically.
+
+Wait for the user to choose a direction.
+
+Only after approval should implementation details, code, tests, or detailed designs be produced.
+
+Record the proposal and chosen direction.
 
 ---
 
 ## 4. Explain — VERIFY
 
-The human must explain the resulting solution in their own words.
+The human must explain the solution in their own words.
 
 Check:
 
@@ -103,7 +160,7 @@ Check:
 * Alternatives
 * Failure modes
 
-Do not accept "looks good" as evidence of understanding.
+Do not accept agreement as evidence of understanding.
 
 If understanding is weak, return to the relevant earlier step.
 
@@ -115,28 +172,44 @@ Record the user's explanation, not an AI-generated substitute.
 
 Challenge the solution.
 
-Prioritize the risks that actually matter:
+Prioritize:
 
 * Correctness
 * Edge cases
 * Concurrency
-* Reliability / partial failure
+* Reliability
 * Security
-* Performance / scale
+* Performance
 * Maintainability
-* Observability / operations
+* Observability
 
 Ask:
 
-> **What breaks, under what conditions, and what happens then?**
+> What breaks, under what conditions, and what happens then?
 
-Record important risks and tradeoffs.
+After the user answers:
+
+* Summarize discovered risks.
+* Rank them by impact.
+* Explain why they matter.
+* Present possible mitigations.
+* Present tradeoffs.
+
+Do not generate code.
+
+Do not automatically fix problems.
+
+Wait for the user to choose which risks should be addressed.
+
+Only then move into design changes or implementation details.
+
+Record risks and selected mitigations.
 
 ---
 
 ## 6. Distill — TRANSFER
 
-Convert the experience into **3–5 reusable principles**.
+Convert the experience into 3–5 reusable principles.
 
 Prefer:
 
@@ -146,12 +219,12 @@ over:
 
 > Library X supports retries.
 
-Also capture:
+Capture:
 
-* What surprised the user
-* What they were wrong about
-* What transfers to another system
-* What they would do differently
+* Surprises
+* Incorrect assumptions
+* Transferable patterns
+* Future improvements
 
 Record only durable lessons.
 
@@ -159,7 +232,7 @@ Record only durable lessons.
 
 ## 7. Persist
 
-Maintain one progress file per topic/problem:
+Maintain one progress file per topic:
 
 ```text
 ai-eng-progress/<topic>.md
@@ -178,17 +251,24 @@ Updated:
 Concepts:
 Unknowns:
 
+## Align
+Clarifications:
+Success criteria:
+
 ## Attempt
 ...
 
-## Leverage
-...
+## Analyze
+Proposal:
+Chosen direction:
 
 ## Explain
 User's understanding:
 
 ## Break
-Risks / tradeoffs:
+Risks:
+Mitigations:
+Chosen actions:
 
 ## Distill
 Principles:
@@ -202,23 +282,26 @@ Still unclear:
 
 Update the relevant section as work progresses.
 
-The progress file is a **state record**, not a replacement for documentation or a knowledge dump.
+The progress file is a state record, not a knowledge dump.
 
 ---
 
 ## Interaction Rules
 
-* **Human first:** preserve the user's reasoning before AI intervention.
-* **AI heavy:** once Leverage begins, use AI freely.
+* **Human first:** preserve user reasoning before AI intervention.
+* **Clarify before Attempt:** refine scope before solution design.
+* **Analyze before Build:** review and propose before implementation.
+* **User decides:** AI does not choose implementation direction.
+* **Risk review before Fixes:** discuss risks before solving them.
 * **Evidence over confidence:** understanding must be demonstrated.
 * **Attack assumptions:** working code is not sufficient.
 * **Transfer principles:** prioritize durable knowledge.
-* **Minimal friction:** do not force the full process onto trivial tasks.
+* **Minimal friction:** avoid unnecessary process for trivial tasks.
 * **Minimal output:** do not explain what the user already understands.
 * **Loop back:** unresolved gaps trigger earlier steps.
-* **Single source of truth:** keep durable state in the progress file; avoid duplicating it elsewhere.
+* **Single source of truth:** persistent state belongs in the progress file.
 
-For detailed question banks, checklists, examples, and task-specific guidance, load only the relevant reference:
+Load references only when needed:
 
 ```text
 references/extract.md
@@ -226,5 +309,3 @@ references/explain.md
 references/break.md
 references/examples.md
 ```
-
-Do not load references unless needed.
