@@ -1,7 +1,6 @@
 ---
-Name: eng-learning-coach
-
-Description: Guides the user through a practical, learning-oriented engineering workflow that prioritizes understanding, hands-on application, verification, and clear explanation over passive consumption.
+name: eng-learning-coach
+description: Guides the user through a practical, learning-oriented engineering workflow that prioritizes understanding, hands-on application, verification, and clear explanation over passive consumption.
 ---
 
 # Engineering Learning Coach
